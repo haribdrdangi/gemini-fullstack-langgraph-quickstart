@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import type { Message } from "@langchain/langgraph-sdk";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion"; // Added AnimatePresence
 import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
@@ -23,57 +23,70 @@ type MdComponentProps = {
 // Markdown components
 const mdComponents: any = {
   h1: ({ className, children, ...props }: MdComponentProps) => (
-    <h1 className={cn("text-2xl font-bold mt-4 mb-2", className)} {...props}>
+    <h1
+      className={cn("text-2xl font-semibold mt-6 mb-3", className)}
+      {...props}
+    >
       {children}
     </h1>
   ),
   h2: ({ className, children, ...props }: MdComponentProps) => (
-    <h2 className={cn("text-xl font-bold mt-3 mb-2", className)} {...props}>
+    <h2
+      className={cn("text-xl font-semibold mt-5 mb-2", className)}
+      {...props}
+    >
       {children}
     </h2>
   ),
   h3: ({ className, children, ...props }: MdComponentProps) => (
-    <h3 className={cn("text-lg font-bold mt-3 mb-1", className)} {...props}>
+    <h3
+      className={cn("text-lg font-semibold mt-4 mb-2", className)}
+      {...props}
+    >
       {children}
     </h3>
   ),
   p: ({ className, children, ...props }: MdComponentProps) => (
-    <p className={cn("mb-3 leading-7", className)} {...props}>
+    <p className={cn("mb-4 leading-relaxed", className)} {...props}>
       {children}
     </p>
   ),
   a: ({ className, children, href, ...props }: MdComponentProps) => (
-    <Badge className="text-xs mx-0.5">
-      <a
-        className={cn("text-blue-400 hover:text-blue-300 text-xs", className)}
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        {...props}
-      >
-        {children}
-      </a>
-    </Badge>
+    <a
+      className={cn(
+        "text-primary hover:text-primary/80 underline",
+        className
+      )}
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      {...props}
+    >
+      {children}
+    </a>
   ),
   ul: ({ className, children, ...props }: MdComponentProps) => (
-    <ul className={cn("list-disc pl-6 mb-3", className)} {...props}>
+    <ul className={cn("list-disc pl-5 mb-4 space-y-1", className)} {...props}>
       {children}
     </ul>
   ),
   ol: ({ className, children, ...props }: MdComponentProps) => (
-    <ol className={cn("list-decimal pl-6 mb-3", className)} {...props}>
+    <ol
+      className={cn("list-decimal pl-5 mb-4 space-y-1", className)}
+      {...props}
+    >
       {children}
     </ol>
   ),
   li: ({ className, children, ...props }: MdComponentProps) => (
-    <li className={cn("mb-1", className)} {...props}>
+    <li className={cn("", className)} {...props}>
       {children}
     </li>
   ),
   blockquote: ({ className, children, ...props }: MdComponentProps) => (
     <blockquote
       className={cn(
-        "border-l-4 border-neutral-600 pl-4 italic my-3 text-sm",
+        "border-l-4 border-border pl-4 italic my-4 text-muted-foreground",
         className
       )}
       {...props}
@@ -84,7 +97,7 @@ const mdComponents: any = {
   code: ({ className, children, ...props }: MdComponentProps) => (
     <code
       className={cn(
-        "bg-neutral-900 rounded px-1 py-0.5 font-mono text-xs",
+        "bg-muted text-muted-foreground rounded px-1.5 py-1 font-mono text-sm",
         className
       )}
       {...props}
@@ -95,7 +108,7 @@ const mdComponents: any = {
   pre: ({ className, children, ...props }: MdComponentProps) => (
     <pre
       className={cn(
-        "bg-neutral-900 p-3 rounded-lg overflow-x-auto font-mono text-xs my-3",
+        "bg-muted text-muted-foreground p-4 rounded-lg overflow-x-auto font-mono text-sm my-4",
         className
       )}
       {...props}
@@ -104,11 +117,14 @@ const mdComponents: any = {
     </pre>
   ),
   hr: ({ className, ...props }: MdComponentProps) => (
-    <hr className={cn("border-neutral-600 my-4", className)} {...props} />
+    <hr className={cn("border-border my-6", className)} {...props} />
   ),
   table: ({ className, children, ...props }: MdComponentProps) => (
-    <div className="my-3 overflow-x-auto">
-      <table className={cn("border-collapse w-full", className)} {...props}>
+    <div className="my-4 overflow-x-auto rounded-lg border border-border">
+      <table
+        className={cn("w-full divide-y divide-border", className)}
+        {...props}
+      >
         {children}
       </table>
     </div>
@@ -116,7 +132,7 @@ const mdComponents: any = {
   th: ({ className, children, ...props }: MdComponentProps) => (
     <th
       className={cn(
-        "border border-neutral-600 px-3 py-2 text-left font-bold",
+        "px-4 py-3 text-left font-medium bg-muted text-muted-foreground",
         className
       )}
       {...props}
@@ -125,10 +141,7 @@ const mdComponents: any = {
     </th>
   ),
   td: ({ className, children, ...props }: MdComponentProps) => (
-    <td
-      className={cn("border border-neutral-600 px-3 py-2", className)}
-      {...props}
-    >
+    <td className={cn("px-4 py-3 text-sm", className)} {...props}>
       {children}
     </td>
   ),
@@ -175,35 +188,46 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
 
   return (
     <motion.div
+      layout // Added layout prop to the main bubble container
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-      className={cn(
-        "flex items-start gap-3",
-        isHuman ? "justify-end" : ""
-      )}
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      className={cn("flex items-start gap-3", isHuman ? "justify-end" : "")}
     >
-      <div
+      <motion.div // Also add layout to the inner container that holds all content
+        layout
         className={cn(
-          "relative break-words flex flex-col rounded-3xl min-h-7 max-w-[100%] sm:max-w-[90%] px-4 pt-3",
+          "relative break-words flex flex-col rounded-xl min-h-7 max-w-[100%] sm:max-w-[90%] p-4 shadow-sm",
           isHuman
-            ? "bg-neutral-700 text-white rounded-br-lg"
-            : "bg-neutral-800 text-neutral-100 rounded-bl-lg"
+            ? "bg-primary text-primary-foreground rounded-br-md"
+            : "bg-card text-card-foreground rounded-bl-md"
         )}
       >
-        {!isHuman && activityForThisBubble && activityForThisBubble.length > 0 && (
-          <div className="mb-3 border-b border-neutral-700 pb-3 text-xs">
-            <ActivityTimeline
-              processedEvents={activityForThisBubble}
-              isLoading={isLiveActivityForThisBubble}
-            />
-          </div>
-        )}
-        {renderContent()}
+        <AnimatePresence> {/* Handles appearance/disappearance of timeline */}
+          {!isHuman && activityForThisBubble && activityForThisBubble.length > 0 && (
+            <motion.div
+              layout // Ensures the div itself animates layout changes (e.g. when timeline inside expands)
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2, ease: "easeInOut" }}
+              className="mb-3 border-b border-border pb-3 text-xs overflow-hidden" // overflow-hidden helps with height animation
+            >
+              <ActivityTimeline
+                processedEvents={activityForThisBubble}
+                isLoading={isLiveActivityForThisBubble}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+        <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-normal prose-headings:font-medium prose-headings:text-foreground">
+          {renderContent()}
+        </div>
         {!isHuman && (
           <Button
-            variant="default"
-            className="cursor-pointer bg-neutral-700 border-neutral-600 text-neutral-300 self-end mt-2"
+            variant="ghost" // More subtle button variant
+            size="icon"
+            className="text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer self-end mt-3 transition-all duration-200 ease-in-out"
             onClick={() =>
               handleCopy(
                 typeof message.content === "string"
@@ -212,12 +236,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
                 message.id!
               )
             }
+            aria-label={copiedMessageId === message.id ? "Message copied" : "Copy message content"} // Updated title to aria-label
           >
-            {copiedMessageId === message.id ? "Copied" : "Copy"}
             {copiedMessageId === message.id ? (
-              <CopyCheck className="ml-2 h-4 w-4" />
+              <CopyCheck className="h-4 w-4 text-green-500" />
             ) : (
-              <Copy className="ml-2 h-4 w-4" />
+              <Copy className="h-4 w-4" />
             )}
           </Button>
         )}
