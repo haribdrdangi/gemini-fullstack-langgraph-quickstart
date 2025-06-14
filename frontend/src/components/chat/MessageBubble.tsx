@@ -197,10 +197,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
       <motion.div // Also add layout to the inner container that holds all content
         layout
         className={cn(
-          "relative break-words flex flex-col rounded-xl min-h-7 max-w-[100%] sm:max-w-[90%] p-4 shadow-sm",
+          "relative break-words flex flex-col rounded-xl min-h-7 max-w-[100%] sm:max-w-[90%] px-4 py-3 shadow-sm", // Adjusted padding
           isHuman
-            ? "bg-primary text-primary-foreground rounded-br-md"
-            : "bg-card text-card-foreground rounded-bl-md"
+            ? "bg-accent text-accent-foreground" // Updated human message style
+            : "bg-card text-card-foreground" // Standard AI message style
         )}
       >
         <AnimatePresence> {/* Handles appearance/disappearance of timeline */}
@@ -211,7 +211,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="mb-3 border-b border-border pb-3 text-xs overflow-hidden" // overflow-hidden helps with height animation
+              className="mt-3 border-t border-border pt-3 text-xs overflow-hidden" // Updated to border-top and margin-top
             >
               <ActivityTimeline
                 processedEvents={activityForThisBubble}
@@ -223,11 +223,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
         <div className="prose prose-sm dark:prose-invert max-w-none prose-p:leading-normal prose-headings:font-medium prose-headings:text-foreground">
           {renderContent()}
         </div>
+        {/* Timestamp could be added here if needed, e.g., <div className="text-xs text-muted-foreground mt-1.5 self-end">...</div> */}
         {!isHuman && (
           <Button
-            variant="ghost" // More subtle button variant
+            variant="ghost"
             size="icon"
-            className="text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer self-end mt-3 transition-all duration-200 ease-in-out"
+            className="text-muted-foreground/70 hover:text-muted-foreground cursor-pointer self-end mt-1.5 transition-all duration-200 ease-in-out" // Adjusted className and mt
             onClick={() =>
               handleCopy(
                 typeof message.content === "string"
@@ -236,12 +237,12 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({
                 message.id!
               )
             }
-            aria-label={copiedMessageId === message.id ? "Message copied" : "Copy message content"} // Updated title to aria-label
+            aria-label={copiedMessageId === message.id ? "Message copied" : "Copy message content"}
           >
             {copiedMessageId === message.id ? (
               <CopyCheck className="h-4 w-4 text-green-500" />
             ) : (
-              <Copy className="h-4 w-4" />
+              <Copy className="h-4 w-4" /> // Assuming Copy icon is appropriate
             )}
           </Button>
         )}

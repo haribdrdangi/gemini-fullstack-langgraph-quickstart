@@ -21,8 +21,8 @@ const toastIcons = {
 
 const toastStyles = {
   info: 'bg-card border-primary text-primary',
-  success: 'bg-card border-green-500 text-green-500', // Assuming green-500 is available or use another theme color
-  warning: 'bg-card border-yellow-600 text-yellow-600', // Assuming yellow-600
+  success: 'bg-card border-primary text-primary', // Updated to use theme's primary color
+  warning: 'bg-card border-accent text-accent', // Updated to use theme's accent color
   error: 'bg-destructive text-destructive-foreground',
 };
 

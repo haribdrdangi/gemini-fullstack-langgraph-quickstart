@@ -2,6 +2,8 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Loader2, Activity, Search, TextSearch, Brain, Pen } from 'lucide-react';
 import type { ProcessedEvent } from '../ActivityTimeline';
+import { truncateData } from '@/lib/utils'; // Import truncateData
+import { cn } from "@/lib/utils"; // cn is already imported
 
 interface TimelineEventProps {
   event: ProcessedEvent;
@@ -9,11 +11,14 @@ interface TimelineEventProps {
   isLoading: boolean;
 }
 
+// TimelineIcon component is implicitly what getEventIcon returns.
+// We will adjust its class directly in the getEventIcon function.
 const getEventIcon = (title: string) => {
-  const iconClasses = "h-4 w-4 text-muted-foreground"; // Updated icon color
+  const iconClasses = "h-3.5 w-3.5 text-accent"; // Adjusted size and color
   if (title.toLowerCase().includes('generating')) {
     return <TextSearch className={iconClasses} />;
   } else if (title.toLowerCase().includes('thinking')) {
+    // Spinner for 'thinking' state, potentially the one referred to in prompt
     return <Loader2 className={cn(iconClasses, "animate-spin")} />;
   } else if (title.toLowerCase().includes('reflection')) {
     return <Brain className={iconClasses} />;
@@ -24,10 +29,6 @@ const getEventIcon = (title: string) => {
   }
   return <Activity className={iconClasses} />;
 };
-
-// Helper to import cn for getEventIcon if it's not already available globally in this file.
-// For this exercise, assuming cn is available or this would be part of a broader setup.
-import { cn } from "@/lib/utils";
 
 const TimelineEvent: React.FC<TimelineEventProps> = ({ event, isLast, isLoading }) => {
   const renderData = (data: any) => {
@@ -63,25 +64,40 @@ const TimelineEvent: React.FC<TimelineEventProps> = ({ event, isLast, isLoading 
     return JSON.stringify(data);
   };
 
+  const formattedData = renderData(event.data);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
-      transition={{ duration: 0.25, ease: "easeOut" }} // Updated animation
-      className="relative pl-10 pb-5" // Increased left padding for icon, increased bottom padding
+      transition={{ duration: 0.25, ease: "easeOut" }}
+      // className="relative pl-10 pb-5" // Original classes
+      // The prompt suggests: flex items-start gap-2.5 py-2 text-sm
+      // Given the absolute positioning of icon/line, direct flex conversion is complex.
+      // We'll keep relative and adjust padding/margins and child styles.
+      className="relative pl-10 py-2 text-sm" // Adjusted padding, added base text-sm
     >
       {!isLast || (isLoading && isLast) ? (
-        <div className="absolute left-[18px] top-[22px] h-full w-0.5 bg-border" /> // Adjusted position for new icon size/padding
+        // Dotted Line: from w-0.5 bg-border to w-px border-l border-dotted border-border/60
+        // The left position might need slight adjustment if icon size changes significantly.
+        // Icon container is h-9 w-9, icon itself is h-3.5 w-3.5. (approx 14px). Center of 36px is 18px.
+        // A 1.5 padding on 36px means inner area is 30px. Icon 14px. Centered.
+        // Line starts at top-[22px] (middle of icon container's height roughly), left-[18px] (center of icon container's width)
+        <div className="absolute left-[calc(2.25rem/2)] top-[calc(2.25rem/2+0.75rem)] h-full w-px border-l border-dotted border-border/60" />
       ) : null}
-      <div className="absolute left-0 top-3 h-9 w-9 rounded-full bg-muted flex items-center justify-center ring-2 ring-background">
-        {/* Updated: bg-muted, ring-2, ring-background (to blend with card bg), increased size slightly */}
+      {/* Icon Container: bg-accent/15 p-1.5 rounded-full. Original: h-9 w-9 bg-muted rounded-full ring-2 ring-background */}
+      <div className="absolute left-0 top-[0.375rem] h-9 w-9 rounded-full bg-accent/15 flex items-center justify-center p-1.5">
+        {/* top-3 (12px) becomes top-[0.375rem] (6px) if py-2 on root. mt-0.5 on icon container. */}
         {getEventIcon(event.title)}
       </div>
-      <div className="ml-2"> {/* Added small margin for content separation from icon line */}
-        <p className="text-sm text-foreground font-medium mb-1">{event.title}</p> {/* Updated text color and margin */}
-        <p className="text-xs text-muted-foreground leading-snug"> {/* Updated text color and leading */}
-          {renderData(event.data)}
+      {/* Text Content Container: ml-2 is current. With pl-10 on root, effective pl is large. */}
+      <div className="ml-1"> {/* Adjusted margin for text content */}
+        {/* Title: text-sm font-medium text-foreground/90 */}
+        <p className="text-sm font-medium text-foreground/90 mb-0.5">{event.title}</p>
+        {/* Data: text-xs text-muted-foreground/90 mt-0.5. Apply truncateData here. */}
+        <p className="text-xs text-muted-foreground/90 mt-0.5 leading-snug">
+          {truncateData(formattedData)}
         </p>
       </div>
     </motion.div>

@@ -40,14 +40,14 @@ export function ActivityTimeline({
 
   return (
     <Card className="border-none rounded-lg bg-muted/30 dark:bg-muted/10 max-h-96 shadow-none">
-      <CardHeader className="p-3"> {/* Reduced padding for header */}
-        <CardDescription className="flex items-center justify-between text-xs">
+      <CardHeader className="p-2.5"> {/* Updated padding */}
+        <CardDescription className="flex items-center justify-between text-sm cursor-pointer"> {/* Updated text size and cursor */}
           <div
             role="button" // Added role
             tabIndex={0} // Make focusable
             aria-expanded={!isTimelineCollapsed} // ARIA expanded state
             // aria-controls="timeline-content-area" // If the motion.div below had id="timeline-content-area"
-            className="flex items-center justify-start w-full cursor-pointer gap-1 text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-sm" // Added focus styling
+            className="flex items-center justify-start w-full cursor-pointer gap-1.5 text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring rounded-sm" // Added focus styling, updated gap
             onClick={() => setIsTimelineCollapsed(!isTimelineCollapsed)}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setIsTimelineCollapsed(!isTimelineCollapsed); }} // Keyboard activation
           >
@@ -55,9 +55,10 @@ export function ActivityTimeline({
               animate={{ rotate: isTimelineCollapsed ? 0 : 180 }}
               transition={{ duration: 0.2 }}
             >
-              <ChevronDown className="h-4 w-4" /> {/* Adjusted margin by removing mr-1, added to text instead */}
+              <ChevronDown className="h-4 w-4" />
             </motion.div>
-            <span className="ml-1">Research Activity</span> {/* Added ml-1 to text for spacing */}
+            {/* ml-1 on span is fine with parent gap-1.5 */}
+            <span className="ml-1">Research Activity</span>
           </div>
         </CardDescription>
       </CardHeader>
@@ -68,7 +69,7 @@ export function ActivityTimeline({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: "easeInOut" }}
+            transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }} // Updated transition
             className="overflow-hidden" // Crucial for height animation
           >
             <ScrollArea className="max-h-80 overflow-y-auto">
@@ -85,15 +86,16 @@ export function ActivityTimeline({
             </AnimatePresence>
             {isLoading && processedEvents.length === 0 && (
               <div className="flex items-center justify-center p-4 text-muted-foreground">
-                <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                <p className="text-sm">Searching...</p>
+                <Loader2 className="h-5 w-5 animate-spin mr-2 text-accent" /> {/* Added text-accent */}
+                <p className="text-sm text-muted-foreground">Searching...</p> {/* Ensured text-muted-foreground */}
               </div>
             )}
             {!isLoading && processedEvents.length === 0 && (
-              <div className="flex flex-col items-center justify-center h-full text-muted-foreground pt-8 pb-4">
-                <Info className="h-5 w-5 mb-2" />
-                <p className="text-sm">No activity to display.</p>
-                <p className="text-xs mt-1">
+              // Updated padding py-6, icon color, text colors
+              <div className="flex flex-col items-center justify-center h-full text-muted-foreground py-6">
+                <Info className="h-5 w-5 mb-2 text-muted-foreground/80" />
+                <p className="text-sm text-muted-foreground/80">No activity to display.</p>
+                <p className="text-xs mt-1 text-muted-foreground/70">
                   Timeline will update during processing.
                 </p>
               </div>

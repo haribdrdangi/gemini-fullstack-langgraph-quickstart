@@ -7,7 +7,7 @@
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 6px);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -78,24 +78,24 @@
 }
 
 .dark {
-  --background: oklch(0.1 0.03 230); /* Dark, slightly desaturated blue */
-  --foreground: oklch(0.9 0.01 230); /* Light gray with a hint of blue */
-  --card: oklch(0.15 0.03 230); /* Slightly lighter than main background */
-  --card-foreground: oklch(0.9 0.01 230);
-  --popover: oklch(0.12 0.03 230); /* Similar to card or slightly darker */
-  --popover-foreground: oklch(0.9 0.01 230);
-  --primary: oklch(0.7 0.1 190); /* Muted cyan or teal */
-  --primary-foreground: oklch(0.05 0.02 230); /* Darker for contrast on primary */
+  --background: oklch(0.12 0.03 230);
+  --foreground: oklch(0.92 0.01 230);
+  --card: oklch(0.17 0.03 230);
+  --card-foreground: oklch(0.92 0.01 230);
+  --popover: oklch(0.15 0.03 230);
+  --popover-foreground: oklch(0.92 0.01 230);
+  --primary: oklch(0.65 0.12 200);
+  --primary-foreground: oklch(0.98 0.01 200);
   --secondary: oklch(0.65 0.08 270); /* Subtle lavender or purple */
   --secondary-foreground: oklch(0.05 0.02 230); /* Darker for contrast on secondary */
-  --muted: oklch(0.2 0.03 230); /* Darker muted shade */
-  --muted-foreground: oklch(0.6 0.02 230); /* Lighter muted foreground */
-  --accent: oklch(0.7 0.1 190); /* Muted cyan or teal (same as primary) */
-  --accent-foreground: oklch(0.05 0.02 230); /* Darker for contrast on accent */
+  --muted: oklch(0.22 0.03 230);
+  --muted-foreground: oklch(0.65 0.02 230);
+  --accent: oklch(0.7 0.12 260);
+  --accent-foreground: oklch(0.98 0.01 260);
   --destructive: oklch(0.5 0.2 25); /* Adjusted destructive for dark theme */
-  --border: oklch(0.2 0.03 230); /* Subtle, darker shade than card background */
-  --input: oklch(0.2 0.03 230); /* Same as border */
-  --ring: oklch(0.7 0.1 190); /* Primary accent, opaque for better visibility */
+  --border: oklch(0.22 0.03 230);
+  --input: oklch(0.22 0.03 230);
+  --ring: oklch(0.65 0.12 200 / 0.7);
   /* Chart colors can be updated or reviewed later if needed */
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
@@ -118,9 +118,9 @@
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    font-family: 'Inter var', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
     font-size: 16px; /* Base font size */
-    line-height: 1.6; /* Base line height */
+    line-height: 1.7; /* Base line height */
   }
 }
 

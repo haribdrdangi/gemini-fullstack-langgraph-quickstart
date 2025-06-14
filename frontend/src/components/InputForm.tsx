@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion"; // Import motion
 import { Button } from "@/components/ui/button";
 import { SquarePen, Brain, Send, StopCircle, Zap, Cpu } from "lucide-react";
@@ -28,6 +28,16 @@ export const InputForm: React.FC<InputFormProps> = ({
   const [internalInputValue, setInternalInputValue] = useState("");
   const [effort, setEffort] = useState("medium");
   const [model, setModel] = useState("gemini-2.5-flash-preview-04-17");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"; // Reset height to recalculate
+      const scrollHeight = textareaRef.current.scrollHeight;
+      // Tailwind's max-h-[200px] will cap the height
+      textareaRef.current.style.height = `${scrollHeight}px`;
+    }
+  }, [internalInputValue]);
 
   const handleInternalSubmit = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -57,11 +67,12 @@ export const InputForm: React.FC<InputFormProps> = ({
         className={`flex flex-row items-end gap-2 bg-card text-foreground p-3 rounded-lg break-words min-h-[56px]`}
       >
         <Textarea
+          ref={textareaRef}
           value={internalInputValue}
           onChange={(e) => setInternalInputValue(e.target.value)}
           onKeyDown={handleInternalKeyDown}
           placeholder="Who won the Euro 2024 and scored the most goals?"
-          className="w-full bg-transparent text-foreground placeholder-muted-foreground resize-none border-0 focus-visible:ring-1 focus-visible:ring-ring shadow-none md:text-base min-h-[56px] max-h-[200px] p-2 transition-shadow duration-200 ease-in-out focus:shadow-md"
+          className="w-full bg-transparent text-foreground placeholder-muted-foreground resize-none border-0 focus-visible:ring-1 focus-visible:ring-ring shadow-none md:text-base min-h-[40px] max-h-[200px] p-2 transition-shadow duration-200 ease-in-out focus:shadow-md"
           rows={1}
         />
         <div className="flex-shrink-0">
@@ -73,6 +84,8 @@ export const InputForm: React.FC<InputFormProps> = ({
               className="text-destructive hover:text-destructive/90 hover:bg-destructive/10 p-2 rounded-full transition-colors duration-200 ease-in-out"
               onClick={onCancel}
               whileTap={{ scale: 0.90, opacity: 0.8 }}
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               aria-label="Cancel generation" // Added aria-label
             >
               <StopCircle className="h-5 w-5" />
@@ -89,6 +102,8 @@ export const InputForm: React.FC<InputFormProps> = ({
               } p-2 rounded-full transition-colors duration-200 ease-in-out`}
               disabled={isSubmitDisabled}
               whileTap={{ scale: 0.90, opacity: 0.8 }}
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
               aria-label="Send message" // Added aria-label
             >
               <Send className="h-5 w-5" />
@@ -99,7 +114,11 @@ export const InputForm: React.FC<InputFormProps> = ({
       <div className="flex items-center justify-between gap-2">
         <div className="flex flex-row gap-2">
           {/* Effort Select */}
-          <div className="flex flex-row items-center gap-2 bg-card border border-border text-foreground focus-within:ring-1 focus-within:ring-ring rounded-lg pl-3 pr-1 py-1 transition-all duration-200 ease-in-out">
+          <motion.div
+            className="flex flex-row items-center gap-2 bg-card border border-border text-foreground focus-within:ring-1 focus-within:ring-ring rounded-lg pl-3 pr-1 py-1 transition-all duration-200 ease-in-out"
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+          >
             <Brain className="h-4 w-4 text-muted-foreground" />
             <span id="effort-label" className="text-sm text-muted-foreground">Effort</span> {/* Added id for label */}
             <Select value={effort} onValueChange={setEffort}>
@@ -130,9 +149,13 @@ export const InputForm: React.FC<InputFormProps> = ({
                 </SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </motion.div>
           {/* Model Select */}
-          <div className="flex flex-row items-center gap-2 bg-card border border-border text-foreground focus-within:ring-1 focus-within:ring-ring rounded-lg pl-3 pr-1 py-1 transition-all duration-200 ease-in-out">
+          <motion.div
+            className="flex flex-row items-center gap-2 bg-card border border-border text-foreground focus-within:ring-1 focus-within:ring-ring rounded-lg pl-3 pr-1 py-1 transition-all duration-200 ease-in-out"
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 15 }}
+          >
             <Cpu className="h-4 w-4 text-muted-foreground" />
             <span id="model-label" className="text-sm text-muted-foreground">Model</span> {/* Added id for label */}
             <Select value={model} onValueChange={setModel}>
@@ -169,7 +192,7 @@ export const InputForm: React.FC<InputFormProps> = ({
                 </SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </motion.div>
         </div>
         {hasHistory && (
           <MotionButton
@@ -177,6 +200,7 @@ export const InputForm: React.FC<InputFormProps> = ({
             variant="default"
             onClick={() => window.location.reload()}
             whileTap={{ scale: 0.95, opacity: 0.9 }}
+            whileHover={{ scale: 1.03 }}
           >
             <SquarePen size={16} className="mr-2" />
             New Search

@@ -1,5 +1,5 @@
 import type React from "react";
-import { motion } from "framer-motion"; // Import motion
+import { motion, AnimatePresence } from "framer-motion"; // Import motion
 import type { Message } from "@langchain/langgraph-sdk";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { InputForm } from "@/components/InputForm";
@@ -31,6 +31,12 @@ export function ChatMessagesView({
   const [copiedMessageId, setCopiedMessageId] = useState<string | null>(null);
   const { addToast } = useToasts(); // Use the hook
 
+  const messageVariants = {
+    initial: { opacity: 0, y: 20, scale: 0.98 },
+    animate: { opacity: 1, y: 0, scale: 1 },
+    exit: { opacity: 0, y: -10, scale: 0.98, transition: { duration: 0.2 } },
+  };
+
   const handleCopy = async (text: string, messageId: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -50,18 +56,29 @@ export function ChatMessagesView({
           layout // Added layout prop
           className="p-4 md:p-6 space-y-4 max-w-4xl mx-auto pt-16"
         >
-          {messages.map((message, index) => (
-            <MessageBubble
-              key={message.id || `msg-${index}`}
-              message={message}
-              isLastMessage={index === messages.length - 1}
-              isOverallLoading={isLoading}
-              historicalActivity={historicalActivities[message.id!]}
-              liveActivity={liveActivityEvents}
-              handleCopy={handleCopy}
-              copiedMessageId={copiedMessageId}
-            />
-          ))}
+          <AnimatePresence initial={false}>
+            {messages.map((message, index) => (
+              <motion.div
+                key={message.id || `msg-${index}`}
+                variants={messageVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+                layout
+                transition={{ type: 'spring', stiffness: 350, damping: 30 }}
+              >
+                <MessageBubble
+                  message={message}
+                  isLastMessage={index === messages.length - 1}
+                  isOverallLoading={isLoading}
+                  historicalActivity={historicalActivities[message.id!]}
+                  liveActivity={liveActivityEvents}
+                  handleCopy={handleCopy}
+                  copiedMessageId={copiedMessageId}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
           {isLoading &&
             (messages.length === 0 ||
               messages[messages.length - 1].type === "human") && <LoadingBubble />}
